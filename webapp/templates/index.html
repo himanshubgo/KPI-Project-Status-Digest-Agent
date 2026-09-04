@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block lede %}
+<p class="lede">Upload data exports from Zoho Project, Zoho Sprints, Zoho Service Desk,
+  and any other source you add — all from one place. The agent reads them and writes a
+  plain-language brief of what needs attention: behind-schedule projects, SLA breaches,
+  and open blockers.</p>
+{% endblock %}
+
+{% block content %}
+<div class="tabs" role="tablist">
+  <button class="tab is-active" role="tab" aria-selected="true" id="tab-upload">Upload Files</button>
+  <span class="tab is-disabled" role="tab" aria-disabled="true"
+        title="Connecting directly to the Zoho APIs is not part of the assessment">
+    Live Data <span class="pill">Coming soon</span>
+  </span>
+</div>
+
+<form id="run-form" method="post" action="{{ url_for('run') }}" enctype="multipart/form-data">
+  <section class="card" aria-labelledby="data-files-h">
+    <h2 id="data-files-h">Data files</h2>
+    <p class="card-sub">Drop in any mix of exports — Zoho Project, Zoho Sprints, Zoho Service Desk,
+      timesheets, or anything added later. One place, any number of files.</p>
+
+    <label class="drop" id="drop">
+      <input type="file" id="files" name="files" multiple
+             accept=".csv,.xlsx,.xls,.xlsm" hidden>
+      <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" fill="none" stroke="currentColor"
+              stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor"
+              stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span class="drop-main"><b>Click to upload</b> or drag files here</span>
+      <span class="drop-hint">.csv, .xlsx or .xls · select multiple at once · up to {{ max_upload_mb }}MB</span>
+    </label>
+
+    <ul class="filelist" id="filelist" hidden></ul>
+
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <div class="adv-row">
+        <label for="as_of">Report as at</label>
+        <input type="date" id="as_of" name="as_of" value="{{ today }}">
+        <span class="adv-note">Everything is measured against this date. Change it to reproduce
+          an earlier brief.</span>
+      </div>
+    </details>
+  </section>
+
+  <div class="actions">
+    <button class="btn" id="submit" type="submit" disabled>Run assessment</button>
+    <span class="actions-hint" id="hint">Upload at least one file to run the digest.</span>
+  </div>
+</form>
+
+<div class="alert" id="alert" hidden></div>
+
+{% if recent %}
+<section class="recent">
+  <h2>Recent runs</h2>
+  <ul>
+    {% for r in recent %}
+    <li>
+      <a href="{{ url_for('result', run_id=r.id) }}">Brief as at {{ r.as_of }}</a>
+      <span class="recent-meta">{{ r.when }} · {{ r.actions }} action{{ '' if r.actions == 1 else 's' }}{% if r.crit %} · {{ r.crit }} critical KPI{{ '' if r.crit == 1 else 's' }}{% endif %}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<div class="overlay" id="overlay" hidden>
+  <div class="overlay-box">
+    <div class="spinner" aria-hidden="true"></div>
+    <p class="overlay-title">Reading your exports…</p>
+    <p class="overlay-step" id="step">Identifying each feed by its column names</p>
+    <p class="overlay-note">The timesheet export is usually the slow one — it can hold
+      50,000+ rows. This normally takes under a minute.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const input   = document.getElementById('files');
+  const drop    = document.getElementById('drop');
+  const list    = document.getElementById('filelist');
+  const submit  = document.getElementById('submit');
+  const hint    = document.getElementById('hint');
+  const form    = document.getElementById('run-form');
+  const overlay = document.getElementById('overlay');
+  const alertEl = document.getElementById('alert');
+  const step    = document.getElementById('step');
+
+  const OK = ['.csv', '.xlsx', '.xls', '.xlsm'];
+  const fmt = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB'
+                               : Math.max(1, Math.round(b / 1024)) + ' KB';
+
+  function render() {
+    const files = Array.from(input.files || []);
+    list.innerHTML = '';
+    list.hidden = files.length === 0;
+
+    let bad = 0;
+    for (const f of files) {
+      const ext = ('.' + f.name.split('.').pop()).toLowerCase();
+      const good = OK.includes(ext);
+      if (!good) bad++;
+      const li = document.createElement('li');
+      li.className = good ? '' : 'is-bad';
+      const nm = document.createElement('span');
+      nm.className = 'fl-name';
+      nm.textContent = f.name;
+      const sz = document.createElement('span');
+      sz.className = 'fl-size';
+      sz.textContent = good ? fmt(f.size) : 'unsupported type';
+      li.append(nm, sz);
+      list.append(li);
+    }
+
+    const ready = files.length > 0 && bad === 0;
+    submit.disabled = !ready;
+    if (!files.length)  hint.textContent = 'Upload at least one file to run the digest.';
+    else if (bad)       hint.textContent = 'Remove the unsupported file(s) to continue.';
+    else                hint.textContent = files.length + ' file' + (files.length > 1 ? 's' : '') + ' ready.';
+  }
+
+  input.addEventListener('change', render);
+
+  ['dragenter', 'dragover'].forEach(ev =>
+    drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('is-over'); }));
+  ['dragleave', 'drop'].forEach(ev =>
+    drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('is-over'); }));
+  drop.addEventListener('drop', e => {
+    if (e.dataTransfer && e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      render();
+    }
+  });
+
+  const STEPS = [
+    'Identifying each feed by its column names',
+    'Normalising dates across three export formats',
+    'Matching projects against logged effort',
+    'Computing KPIs and monthly trends',
+    'Deriving actions and data-quality caveats',
+  ];
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (submit.disabled) return;
+    alertEl.hidden = true;
+    overlay.hidden = false;
+    let i = 0;
+    const tick = setInterval(() => { i = (i + 1) % STEPS.length; step.textContent = STEPS[i]; }, 4000);
+
+    try {
+      const res  = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+      const data = await res.json().catch(() => ({ error: 'The server returned an unreadable response.' }));
+      if (res.ok && data.redirect) { window.location = data.redirect; return; }
+
+      let html = '<strong>' + (data.error || 'Something went wrong.') + '</strong>';
+      if (data.detail) html += '<p>' + data.detail + '</p>';
+      if (data.found && data.found.length) {
+        html += '<p class="alert-sub">What the agent saw in your files:</p><table class="alert-table">' +
+                '<tr><th>File</th><th>Sheet</th><th>Columns</th><th>Closest feed</th></tr>' +
+                data.found.map(f =>
+                  '<tr><td>' + f.file + '</td><td>' + f.sheet + '</td><td>' + f.columns +
+                  '</td><td>' + f.closest + ' (' + f.score + ' matched)</td></tr>').join('') +
+                '</table>';
+      }
+      alertEl.innerHTML = html;
+      alertEl.hidden = false;
+      alertEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      alertEl.innerHTML = '<strong>Could not reach the agent.</strong><p>Is the server still running?</p>';
+      alertEl.hidden = false;
+    } finally {
+      clearInterval(tick);
+      overlay.hidden = true;
+    }
+  });
+
+  render();
+})();
+</script>
+{% endblock %}

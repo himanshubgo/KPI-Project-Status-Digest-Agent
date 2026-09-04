@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Brief as at {{ s.as_of }} · Zoho - KPI/Status Digest Agent{% endblock %}
+{% block heading %}Assessment complete{% endblock %}
+
+{% block lede %}
+<p class="lede">Brief measured as at <b>{{ s.as_of }}</b>, generated {{ s.generated }}.
+  {{ s.counts.actions }} action{{ '' if s.counts.actions == 1 else 's' }},
+  {{ s.counts.kpis }} KPIs, {{ s.counts.caveats }} data-quality caveats.</p>
+{% endblock %}
+
+{% block content %}
+
+<section class="card">
+  <h2>Feeds the agent identified</h2>
+  <p class="card-sub">Matched on column names, not filenames. Age is measured against the report date.</p>
+  <table class="feeds">
+    <thead><tr><th>Feed</th><th>Rows</th><th>Sheet used</th><th>As at</th><th>Age</th></tr></thead>
+    <tbody>
+      {% for f in s.feeds %}
+      <tr>
+        <td><b>{{ f.name }}</b><span class="feed-file">{{ f.file }}</span></td>
+        <td class="num">{{ "{:,}".format(f.rows) }}</td>
+        <td class="mono">{{ f.sheet or '(csv)' }}</td>
+        <td class="mono">{{ f.as_of or '—' }}</td>
+        <td><span class="dot dot-{{ f.freshness }}"></span>{% if f.days_old is none %}undated{% elif f.days_old == 0 %}today{% else %}{{ f.days_old }}d{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if s.uploads %}
+  <p class="card-foot">Uploaded: {{ s.uploads | join(', ') }}</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Actions</h2>
+  <p class="card-sub">Ranked by when a decision is needed. Each one is gated on a measured condition —
+    if it clears, the action stops appearing.</p>
+  <ol class="act-list">
+    {% for a in s.actions %}
+    <li class="act act-{{ a.severity }}">
+      <span class="act-num">{{ "%02d"|format(a.rank) }}</span>
+      <div class="act-body">
+        <span class="act-title">{{ a.title }}</span>
+        <span class="act-meta">
+          <span class="{{ 'vacant' if a.owner_vacant else '' }}">{{ a.owner }}</span>
+          · by {{ a.due }}
+          {% if a.change %}· {{ a.change }}{% endif %}
+        </span>
+      </div>
+      <span class="act-band">{{ a.band }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+
+<div class="actions">
+  <a class="btn" href="{{ url_for('brief', run_id=run_id) }}" target="_blank" rel="noopener">Open the brief</a>
+  <a class="btn btn-ghost" href="{{ url_for('download', run_id=run_id) }}">Download HTML</a>
+  <a class="btn btn-ghost" href="{{ url_for('index') }}">Run another</a>
+  <form method="post" action="{{ url_for('delete', run_id=run_id) }}" class="inline-form"
+        onsubmit="return confirm('Delete this run and its uploaded files?')">
+    <button class="btn btn-quiet" type="submit">Delete run</button>
+  </form>
+</div>
+
+<section class="preview">
+  <div class="preview-head">
+    <h2>Brief preview</h2>
+    <span class="preview-note">Rendered below · open in a new tab for the full width</span>
+  </div>
+  <iframe src="{{ url_for('brief', run_id=run_id, embed=1) }}" title="Delivery Risk Brief"
+          loading="eager"></iframe>
+</section>
+{% endblock %}
