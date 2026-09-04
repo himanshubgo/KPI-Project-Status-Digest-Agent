@@ -1,0 +1,169 @@
+<title>Delivery Risk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+    --ground:#f6f5f2; --surface:#fffffe; --surface-2:#edece7;
+    --ink:#15171a; --ink-2:#3c4148; --muted:#6b7178;
+    --rule:#dedcd6; --rule-soft:#e9e7e2;
+    --accent:#1c4a3a; --accent-soft:#e3ebe6; --accent-mid:#8fb3a3;
+    --critical:#a3291f; --warn:#8a5c0a; --steady:#2f6a4f;
+    --s1:#698722; --s2:#347ec4;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --ground:#0f1211; --surface:#171b19; --surface-2:#1f2422;
+    --ink:#e9ece9; --ink-2:#bcc4bf; --muted:#8a938d;
+    --rule:#2b322e; --rule-soft:#232927;
+    --accent:#7bc0a2; --accent-soft:#172a22; --accent-mid:#3f6b57;
+    --critical:#f0897d; --warn:#d9a441; --steady:#7bc0a2;
+    --s1:#678811; --s2:#2b7ec9; } }
+:root[data-theme="dark"] {
+    --ground:#0f1211; --surface:#171b19; --surface-2:#1f2422;
+    --ink:#e9ece9; --ink-2:#bcc4bf; --muted:#8a938d;
+    --rule:#2b322e; --rule-soft:#232927;
+    --accent:#7bc0a2; --accent-soft:#172a22; --accent-mid:#3f6b57;
+    --critical:#f0897d; --warn:#d9a441; --steady:#7bc0a2;
+    --s1:#678811; --s2:#2b7ec9; }
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;
+  line-height:1.55;-webkit-font-smoothing:antialiased}
+.sheet{max-width:52rem;margin:0 auto;padding:2.5rem 1.5rem 4.5rem;display:flex;
+  flex-direction:column;gap:2.25rem}
+.masthead{display:flex;flex-direction:column;gap:.5rem}
+.eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,5.5vw,2.85rem);line-height:1.02;
+  letter-spacing:-.025em;margin:0}
+.dateline{font-family:var(--mono);font-size:.73rem;color:var(--muted)}
+.section-head{display:flex;flex-direction:column;gap:.2rem}
+.section-head h2{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;margin:0}
+.section-head p{margin:0;color:var(--muted);font-size:.88rem}
+.stack-section{display:flex;flex-direction:column;gap:.8rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(10.5rem,1fr));gap:.5rem}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--steady);
+  padding:.7rem .8rem .75rem;display:flex;flex-direction:column;gap:.18rem;min-width:0}
+.kpi.warn{border-top-color:var(--warn)}
+.kpi.crit{border-top-color:var(--critical)}
+.k-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-2);line-height:1.3}
+.k-val{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1.05;
+  letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:var(--steady)}
+.kpi.warn .k-val{color:var(--warn)}
+.kpi.crit .k-val{color:var(--critical)}
+.k-ctx{font-size:.74rem;color:var(--muted);line-height:1.35}
+.k-badge{align-self:flex-start;margin-top:.2rem;font-family:var(--mono);font-size:.62rem;
+  padding:.12rem .4rem .16rem;background:var(--accent-soft);color:var(--steady);white-space:nowrap;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.kpi.warn .k-badge{background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--warn)}
+.kpi.crit .k-badge{background:color-mix(in srgb,var(--critical) 12%,transparent);color:var(--critical)}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));gap:.8rem}
+figure.chart{margin:0;background:var(--surface);border:1px solid var(--rule);
+  padding:1.1rem 1.3rem 1rem;display:flex;flex-direction:column;gap:.45rem}
+.chart-title{font-family:var(--display);font-weight:700;font-size:.98rem;letter-spacing:-.01em}
+.chart-sub{font-size:.81rem;color:var(--muted)}
+.chart-scroll{overflow-x:auto}
+.chart-scroll svg{display:block;min-width:34rem;width:100%;height:auto}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-family:var(--mono);font-size:.65rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.swatch{width:.62rem;height:.62rem;display:inline-block}
+.band{display:flex;flex-direction:column;gap:.8rem}
+.band-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  border-bottom:2px solid var(--ink);padding-bottom:.4rem;flex-wrap:wrap}
+.band-head h2{font-family:var(--display);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;margin:0}
+.band-meta{font-family:var(--mono);font-size:.68rem;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.1em}
+.action{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--accent-mid);
+  display:grid;grid-template-columns:2.9rem 1fr;min-width:0}
+.action.crit{border-left-color:var(--critical)}
+.action.warn{border-left-color:var(--warn)}
+.a-num{font-family:var(--mono);font-size:.78rem;font-weight:600;color:var(--muted);
+  padding:1rem 0 0;text-align:center;font-variant-numeric:tabular-nums}
+.a-body{padding:.95rem 1.2rem 1.1rem 0;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.a-body h3{font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.22;
+  letter-spacing:-.015em;margin:0;text-wrap:balance}
+ul.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.28rem .3rem}
+ul.chips>li{display:inline-flex;align-items:baseline;gap:.35rem;border:1px solid var(--rule);
+  background:var(--ground);padding:.2rem .48rem .25rem}
+.c-n{font-family:var(--display);font-weight:700;font-size:.87rem;font-variant-numeric:tabular-nums}
+.c-n.crit{color:var(--critical)}
+.c-n.warn{color:var(--warn)}
+.c-n.ok{color:var(--steady)}
+.c-l{font-family:var(--mono);font-size:.64rem;color:var(--muted);white-space:nowrap}
+dl.meta{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:.5rem .9rem;border-top:1px solid var(--rule-soft);padding-top:.6rem}
+dl.meta>div{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+dl.meta dt{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+dl.meta dd{margin:0;font-size:.85rem;font-weight:500;color:var(--ink);line-height:1.35}
+dl.meta dd.vacant{color:var(--critical);font-weight:600}
+.panel{background:var(--surface);border:1px solid var(--rule);padding:1.15rem 1.3rem 1.25rem;
+  display:flex;flex-direction:column;gap:.75rem}
+.panel h2{font-family:var(--display);font-weight:700;font-size:1.12rem;letter-spacing:-.015em;margin:0}
+ul.lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+ul.lines>li{position:relative;padding-left:1.35rem;font-size:.9rem;color:var(--ink-2);line-height:1.5}
+ul.lines>li::before{content:"";position:absolute;left:0;top:.5em;width:.45rem;height:.45rem;
+  background:var(--accent-mid)}
+ul.lines>li.crit::before{background:var(--critical)}
+ul.lines>li.warn::before{background:var(--warn)}
+ul.lines b{color:var(--ink);font-weight:600}
+code{font-family:var(--mono);font-size:.84em;background:var(--surface-2);padding:.06em .32em;color:var(--ink-2)}
+footer{border-top:1px solid var(--rule);padding-top:1rem;font-family:var(--mono);font-size:.68rem;
+  line-height:1.75;color:var(--muted)}
+@media (max-width:36rem){
+  .action{grid-template-columns:1fr}
+  .a-num{text-align:left;padding:.7rem 1rem 0}
+  .a-body{padding:.5rem 1rem 1rem}
+  .sheet{padding:2rem 1rem 3.5rem}}
+</style>
+<div class="sheet">
+  <header class="masthead">
+    <div class="eyebrow">Executive brief · DevOps &amp; Data Visualization</div>
+    <h1>Delivery Risk Brief</h1>
+    <div class="dateline">04 September 2026 · 12 KPIs · 6 actions · all 3 feeds current</div>
+  </header>
+
+  <section class="stack-section" aria-label="Operating KPIs">
+    <div class="section-head"><h2>Operating KPIs</h2>
+      <p>Aug'26, the last complete month. 12 measures the current exports actually
+         support. Thresholds are proposals — the source defines none.</p></div>
+    <div class="kpi-grid"><div class="kpi crit"><span class="k-label">Portfolio on time</span><span class="k-val">43%</span><span class="k-ctx">53 of 124 active projects</span><span class="k-badge">71 past end date</span></div><div class="kpi crit"><span class="k-label">Tickets unowned</span><span class="k-val">19</span><span class="k-ctx">of 42 open · never answered</span><span class="k-badge">Action 01</span></div><div class="kpi crit"><span class="k-label">RCA coverage</span><span class="k-val">6.8%</span><span class="k-ctx">489 of 7,164 scored items</span><span class="k-badge">No root-cause trail</span></div><div class="kpi"><span class="k-label">Ticket closure in SLA</span><span class="k-val">96.9%</span><span class="k-ctx">161 items scored · Aug&#x27;26</span><span class="k-badge">✓ up from 77% Sep&#x27;25</span></div><div class="kpi"><span class="k-label">MTTR service desk</span><span class="k-val">3h02m</span><span class="k-ctx">median of 89 resolved</span><span class="k-badge">✓ steady</span></div><div class="kpi"><span class="k-label">First response</span><span class="k-val">1h48m</span><span class="k-ctx">median · 89 tickets</span><span class="k-badge">✓ from 2h47m Sep&#x27;25</span></div><div class="kpi crit"><span class="k-label">First-resp. breach</span><span class="k-val">21%</span><span class="k-ctx">of 99 raised in Aug&#x27;26</span><span class="k-badge">⚠ flat all year</span></div><div class="kpi warn"><span class="k-label">Work item completion</span><span class="k-val">93.0%</span><span class="k-ctx">Jun&#x27;26 cohort · 299 items</span><span class="k-badge">⚠ below 97.0% median</span></div><div class="kpi"><span class="k-label">Bug rate</span><span class="k-val">14.3%</span><span class="k-ctx">25 of 175 items raised</span><span class="k-badge">✓ below 20.5% median</span></div><div class="kpi warn"><span class="k-label">Team utilisation</span><span class="k-val">63.5%</span><span class="k-ctx">2,239h · 21 people · 21 days</span><span class="k-badge">↓ from 95.5% in Jun&#x27;26</span></div><div class="kpi warn"><span class="k-label">Effort vs estimate</span><span class="k-val">+17%</span><span class="k-ctx">3,620h actual / 3,101h planned</span><span class="k-badge">⚠ 172 items over 2×</span></div><div class="kpi warn"><span class="k-label">Test pass rate</span><span class="k-val">78.6%</span><span class="k-ctx">Aug&#x27;26 · 28 items · thin sample</span><span class="k-badge">⚠ only 613 items scored</span></div></div>
+  </section>
+
+  <section class="stack-section" aria-label="Trends">
+    <div class="section-head"><h2>Where the two streams diverge</h2>
+      <p>DevOps against Ticket Mgmt (M&S) — the only two streams the data can separate.</p></div>
+    <div class="chart-grid">
+      <figure class="chart"><figcaption>
+        <span class="chart-title">Bug rate by stream</span>
+        <span class="chart-sub">Bugs as a share of items raised each month.</span></figcaption>
+        <div class="chart-scroll"><svg viewBox="0 0 660 300" role="img" aria-label="Bug rate by month for each stream. DevOps ranges 0 to 83 percent; Ticket Mgmt (M&amp;S) ranges 12 to 45 percent"><g stroke="var(--rule-soft)" stroke-width="1"><line x1="48.0" y1="193.3" x2="560.0" y2="193.3"></line><line x1="48.0" y1="146.7" x2="560.0" y2="146.7"></line><line x1="48.0" y1="100.0" x2="560.0" y2="100.0"></line><line x1="48.0" y1="53.3" x2="560.0" y2="53.3"></line></g><line x1="48.0" y1="240.0" x2="560.0" y2="240.0" stroke="var(--rule)" stroke-width="1"></line><g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" text-anchor="end"><text x="40.0" y="243.5">0%</text><text x="40.0" y="196.8">20%</text><text x="40.0" y="150.2">40%</text><text x="40.0" y="103.5">60%</text><text x="40.0" y="56.8">80%</text></g><line x1="48.0" y1="192.2" x2="560.0" y2="192.2" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 4"></line><text x="52.0" y="187.2" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--muted)">12-mo median 20.5%</text><polyline fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="48.0,135.5 94.5,183.8 141.1,192.6 187.6,150.6 234.2,176.1 280.7,181.7 327.3,204.1 373.8,178.2 420.4,182.8 466.9,211.8 513.5,205.7 560.0,193.3"></polyline><polyline fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="48.0,185.6 94.5,184.5 141.1,46.8 187.6,138.0 234.2,166.5 280.7,226.9 327.3,159.0 373.8,133.8 420.4,54.3 466.9,127.5 513.5,181.7 560.0,240.0"></polyline><g fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><circle cx="48.0" cy="135.5" r="4"></circle><circle cx="94.5" cy="183.8" r="4"></circle><circle cx="141.1" cy="192.6" r="4"></circle><circle cx="187.6" cy="150.6" r="4"></circle><circle cx="234.2" cy="176.1" r="4"></circle><circle cx="280.7" cy="181.7" r="4"></circle><circle cx="327.3" cy="204.1" r="4"></circle><circle cx="373.8" cy="178.2" r="4"></circle><circle cx="420.4" cy="182.8" r="4"></circle><circle cx="466.9" cy="211.8" r="4"></circle><circle cx="513.5" cy="205.7" r="4"></circle><circle cx="560.0" cy="193.3" r="4"></circle></g><g fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><circle cx="48.0" cy="185.6" r="4"></circle><circle cx="94.5" cy="184.5" r="4"></circle><circle cx="141.1" cy="46.8" r="4"></circle><circle cx="187.6" cy="138.0" r="4"></circle><circle cx="234.2" cy="166.5" r="4"></circle><circle cx="280.7" cy="226.9" r="4"></circle><circle cx="327.3" cy="159.0" r="4"></circle><circle cx="373.8" cy="133.8" r="4"></circle><circle cx="420.4" cy="54.3" r="4"></circle><circle cx="466.9" cy="127.5" r="4"></circle><circle cx="513.5" cy="181.7" r="4"></circle><circle cx="560.0" cy="240.0" r="4"></circle></g><text x="568.0" y="243.5" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink)">0% DevOps</text><text x="568.0" y="196.8" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink)">20% Ticket Mgmt (M&amp;S)</text><g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" text-anchor="middle"><text x="48.0" y="260">Sep&#x27;25</text><text x="187.6" y="260">Dec&#x27;25</text><text x="327.3" y="260">Mar&#x27;26</text><text x="466.9" y="260">Jun&#x27;26</text><text x="560.0" y="260">Aug&#x27;26</text></g></svg></div>
+        <div class="legend"><span><i class="swatch" style="background: var(--s1)"></i> DevOps</span><span><i class="swatch" style="background: var(--s2)"></i> Ticket Mgmt (M&amp;S)</span><span>— — 12-mo median</span></div>
+      </figure>
+      <figure class="chart"><figcaption>
+        <span class="chart-title">Completion by stream</span>
+        <span class="chart-sub">Share of each month's items now closed, cohorts matured 60 days.</span></figcaption>
+        <div class="chart-scroll"><svg viewBox="0 0 660 300" role="img" aria-label="Work item completion rate by creation month for cohorts at least 60 days old, by stream."><g stroke="var(--rule-soft)" stroke-width="1"><line x1="48.0" y1="170.0" x2="560.0" y2="170.0"></line><line x1="48.0" y1="100.0" x2="560.0" y2="100.0"></line><line x1="48.0" y1="30.0" x2="560.0" y2="30.0"></line></g><line x1="48.0" y1="240.0" x2="560.0" y2="240.0" stroke="var(--rule)" stroke-width="1"></line><g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" text-anchor="end"><text x="40.0" y="243.5">70%</text><text x="40.0" y="173.5">80%</text><text x="40.0" y="103.5">90%</text><text x="40.0" y="33.5">100%</text></g><line x1="48.0" y1="51.0" x2="560.0" y2="51.0" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 4"></line><text x="52.0" y="46.0" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--muted)">12-mo median 97.0%</text><polyline fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="48.0,30.0 104.9,37.7 161.8,32.8 218.7,35.6 275.6,44.7 332.4,44.0 389.3,41.2 446.2,42.6 503.1,42.6 560.0,44.0"></polyline><polyline fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="48.0,35.6 104.9,52.4 161.8,56.6 218.7,123.1 275.6,34.2 332.4,58.0 389.3,66.4 446.2,37.0 503.1,37.0 560.0,130.1"></polyline><g fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><circle cx="48.0" cy="30.0" r="4"></circle><circle cx="104.9" cy="37.7" r="4"></circle><circle cx="161.8" cy="32.8" r="4"></circle><circle cx="218.7" cy="35.6" r="4"></circle><circle cx="275.6" cy="44.7" r="4"></circle><circle cx="332.4" cy="44.0" r="4"></circle><circle cx="389.3" cy="41.2" r="4"></circle><circle cx="446.2" cy="42.6" r="4"></circle><circle cx="503.1" cy="42.6" r="4"></circle><circle cx="560.0" cy="44.0" r="4"></circle></g><g fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><circle cx="48.0" cy="35.6" r="4"></circle><circle cx="104.9" cy="52.4" r="4"></circle><circle cx="161.8" cy="56.6" r="4"></circle><circle cx="218.7" cy="123.1" r="4"></circle><circle cx="275.6" cy="34.2" r="4"></circle><circle cx="332.4" cy="58.0" r="4"></circle><circle cx="389.3" cy="66.4" r="4"></circle><circle cx="446.2" cy="37.0" r="4"></circle><circle cx="503.1" cy="37.0" r="4"></circle><circle cx="560.0" cy="130.1" r="4"></circle></g><text x="568.0" y="133.6" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink)">85.7% DevOps</text><text x="568.0" y="47.5" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink)">98% Ticket Mgmt (M&amp;S)</text><g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" text-anchor="middle"><text x="48.0" y="260">Sep&#x27;25</text><text x="218.7" y="260">Dec&#x27;25</text><text x="389.3" y="260">Mar&#x27;26</text><text x="560.0" y="260">Jun&#x27;26</text></g><text x="48.0" y="282" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--muted)">Axis starts at 70%. Ends Jun&#x27;26 — later cohorts not yet mature.</text></svg></div>
+        <div class="legend"><span><i class="swatch" style="background: var(--s1)"></i> DevOps</span><span><i class="swatch" style="background: var(--s2)"></i> Ticket Mgmt (M&amp;S)</span><span>— — 12-mo median</span></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="band"><div class="band-head"><h2>Do this week</h2><span class="band-meta">1 action · by 11 Sep 2026</span></div><article class="action crit"><div class="a-num">01</div><div class="a-body"><h3>Name a triage owner and clear the 19 unclaimed tickets</h3><ul class="chips"><li><span class="c-n crit">19</span><span class="c-l">no owner, never answered</span></li><li><span class="c-n crit">14</span><span class="c-l">High or Urgent</span></li><li><span class="c-n ok">11</span><span class="c-l">client-impacting</span></li><li><span class="c-n ok">237d</span><span class="c-l">oldest</span></li><li><span class="c-n ok">42</span><span class="c-l">open in total</span></li><li><span class="c-n ok">91%</span><span class="c-l">of queue is client-impacting</span></li></ul><dl class="meta"><div><dt>Owner</dt><dd class="vacant">Vacant — field empty on all 19</dd></div><div><dt>By</dt><dd>11 Sep 2026</dd></div><div><dt>Do</dt><dd>Work them down by age, then auto-escalate anything unassigned past 24h. Unowned intake: 9 in Jul&#x27;26, 6 in Aug&#x27;26.</dd></div><div><dt>Effect</dt><dd>Removes the only live client-facing risk</dd></div></dl></div></article><figure class="chart"><figcaption><span class="chart-title">Intake stepped up; headcount did not</span><span class="chart-sub">Before Oct&#x27;25 — avg 35/mo · since — avg 150/mo (4.2× on the same 21 technicians)</span></figcaption><div class="chart-scroll"><svg viewBox="0 0 700 296" role="img" aria-label="Monthly ticket volume showing a step change in intake."><g stroke="var(--rule-soft)" stroke-width="1"><line x1="48.0" y1="206.6" x2="686.0" y2="206.6"></line><line x1="48.0" y1="163.2" x2="686.0" y2="163.2"></line><line x1="48.0" y1="119.8" x2="686.0" y2="119.8"></line><line x1="48.0" y1="76.4" x2="686.0" y2="76.4"></line><line x1="48.0" y1="33.0" x2="686.0" y2="33.0"></line></g><line x1="48.0" y1="250.0" x2="686.0" y2="250.0" stroke="var(--rule)" stroke-width="1"></line><g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" text-anchor="end"><text x="40.0" y="253.5">0</text><text x="40.0" y="210.1">50</text><text x="40.0" y="166.7">100</text><text x="40.0" y="123.3">150</text><text x="40.0" y="79.9">200</text><text x="40.0" y="36.5">250</text></g><rect x="51.5" y="219.6" width="24.9" height="30.4" rx="3" fill="var(--accent-mid)"></rect><rect x="83.4" y="230.0" width="24.9" height="20.0" rx="3" fill="var(--accent-mid)"></rect><rect x="115.3" y="216.1" width="24.9" height="33.9" rx="3" fill="var(--accent-mid)"></rect><rect x="147.2" y="225.7" width="24.9" height="24.3" rx="3" fill="var(--accent-mid)"></rect><rect x="179.1" y="212.7" width="24.9" height="37.3" rx="3" fill="var(--accent-mid)"></rect><rect x="211.0" y="222.2" width="24.9" height="27.8" rx="3" fill="var(--accent-mid)"></rect><rect x="242.9" y="230.9" width="24.9" height="19.1" rx="3" fill="var(--accent-mid)"></rect><rect x="274.8" y="203.1" width="24.9" height="46.9" rx="3" fill="var(--accent-mid)"></rect><rect x="306.7" y="212.7" width="24.9" height="37.3" rx="3" fill="var(--accent-mid)"></rect><rect x="338.6" y="116.3" width="24.9" height="133.7" rx="3" fill="var(--accent)"></rect><rect x="370.5" y="65.1" width="24.9" height="184.9" rx="3" fill="var(--accent)"></rect><rect x="402.4" y="61.6" width="24.9" height="188.4" rx="3" fill="var(--accent)"></rect><rect x="434.3" y="125.9" width="24.9" height="124.1" rx="3" fill="var(--accent)"></rect><rect x="466.2" y="117.2" width="24.9" height="132.8" rx="3" fill="var(--accent)"></rect><rect x="498.1" y="118.9" width="24.9" height="131.1" rx="3" fill="var(--accent)"></rect><rect x="530.0" y="136.3" width="24.9" height="113.7" rx="3" fill="var(--accent)"></rect><rect x="561.9" y="144.1" width="24.9" height="105.9" rx="3" fill="var(--accent)"></rect><rect x="593.8" y="131.1" width="24.9" height="118.9" rx="3" fill="var(--accent)"></rect><rect x="625.7" y="136.3" width="24.9" height="113.7" rx="3" fill="var(--accent)"></rect><rect x="657.6" y="164.1" width="24.9" height="85.9" rx="3" fill="var(--accent)"></rect><line x1="331.6" y1="40.0" x2="331.6" y2="250.0" stroke="var(--critical)" stroke-width="1" stroke-dasharray="3 3"></line><text x="326.6" y="62.0" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--critical)" text-anchor="end">Oct&#x27;25 — intake steps up</text><text x="670.1" y="159.1" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink)" text-anchor="middle" font-weight="500">99</text><text x="414.8" y="56.6" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--ink)" text-anchor="middle" font-weight="500">217</text><g font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)" text-anchor="middle"><text x="64.0" y="268">Jan&#x27;25</text><text x="159.6" y="268">Apr&#x27;25</text><text x="255.3" y="268">Jul&#x27;25</text><text x="351.0" y="268">Oct&#x27;25</text><text x="446.7" y="268">Jan&#x27;26</text><text x="542.5" y="268">Apr&#x27;26</text><text x="638.1" y="268">Jul&#x27;26</text></g><text x="48.0" y="288" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--muted)">Tickets created per month</text></svg></div></figure></section><section class="band"><div class="band-head"><h2>Do this month</h2><span class="band-meta">3 actions · by 30 Sep 2026</span></div><article class="action crit"><div class="a-num">02</div><div class="a-body"><h3>Collapse the priority scale to three tiers and re-measure</h3><ul class="chips"><li><span class="c-n crit">57%</span><span class="c-l">Urgent miss first response</span></li><li><span class="c-n warn">42%</span><span class="c-l">High miss</span></li><li><span class="c-n ok">7%</span><span class="c-l">Normal miss</span></li><li><span class="c-n ok">5</span><span class="c-l">overlapping labels in use</span></li></ul><dl class="meta"><div><dt>Owner</dt><dd>Service desk + PMO</dd></div><div><dt>By</dt><dd>30 Sep 2026</dd></div><div><dt>Do</dt><dd>Merge Normal/Medium and High/Urgent; set a response target per tier</dd></div><div><dt>Effect</dt><dd>Escalation starts buying attention instead of predicting neglect</dd></div></dl></div></article><article class="action crit"><div class="a-num">03</div><div class="a-body"><h3>Explain the impossible ticket dates before automating any reporting</h3><ul class="chips"><li><span class="c-n crit">136</span><span class="c-l">created in the future</span></li><li><span class="c-n crit">130</span><span class="c-l">of those marked Finished</span></li><li><span class="c-n warn">453</span><span class="c-l">due before created</span></li><li><span class="c-n warn">162</span><span class="c-l">resolved before created</span></li></ul><dl class="meta"><div><dt>Owner</dt><dd>Zoho administrator</dd></div><div><dt>By</dt><dd>30 Sep 2026</dd></div><div><dt>Do</dt><dd>Trace whether this is a template, a timezone fault, or backdated bulk edits</dd></div><div><dt>Effect</dt><dd>Unblocks automated SLA reporting — currently not trustworthy</dd></div></dl></div></article><article class="action warn"><div class="a-num">04</div><div class="a-body"><h3>Set a billing-status default so utilisation becomes reportable</h3><ul class="chips"><li><span class="c-n crit">0%</span><span class="c-l">of 90-day hours billable</span></li><li><span class="c-n ok">8,058h</span><span class="c-l">logged in 90 days</span></li><li><span class="c-n ok">24</span><span class="c-l">people logging</span></li></ul><dl class="meta"><div><dt>Owner</dt><dd>Finance + PMO</dd></div><div><dt>By</dt><dd>30 Sep 2026</dd></div><div><dt>Do</dt><dd>Confirm whether non-billable is the real position or an unchanged default</dd></div><div><dt>Effect</dt><dd>First billable ratio the team can actually report</dd></div></dl></div></article></section><section class="band"><div class="band-head"><h2>Do this quarter</h2><span class="band-meta">2 actions · by 31 Dec 2026</span></div><article class="action crit"><div class="a-num">05</div><div class="a-body"><h3>Clear all 71 past-due projects in one reconciliation pass</h3><ul class="chips"><li><span class="c-n crit">71</span><span class="c-l">past end date</span></li><li><span class="c-n ok">247d</span><span class="c-l">median overrun</span></li><li><span class="c-n crit">18</span><span class="c-l">over a year late</span></li><li><span class="c-n ok">21</span><span class="c-l">dormant — close</span></li><li><span class="c-n ok">15</span><span class="c-l">never recorded a task</span></li><li><span class="c-n ok">8</span><span class="c-l">evergreen — reclassify</span></li></ul><dl class="meta"><div><dt>Owner</dt><dd>Sonu Kumar 10 · Shafquat Imam 9 · Anurag Seth 9</dd></div><div><dt>By</dt><dd>31 Dec 2026</dd></div><div><dt>Do</dt><dd>Close, re-baseline or reclassify as a batch — the overrun is systemic, not per-project</dd></div><div><dt>Effect</dt><dd>Register becomes usable for forecasting and capacity</dd></div></dl></div></article><article class="action warn"><div class="a-num">06</div><div class="a-body"><h3>Add an evergreen status; require an end date and one milestone to open a project</h3><ul class="chips"><li><span class="c-n crit">119/124</span><span class="c-l">active have no milestones</span></li><li><span class="c-n ok">11</span><span class="c-l">active have no end date</span></li><li><span class="c-n ok">8</span><span class="c-l">maintenance lines read as late</span></li><li><span class="c-n warn">22</span><span class="c-l">active sitting at 100%</span></li></ul><dl class="meta"><div><dt>Owner</dt><dd>PMO</dd></div><div><dt>By</dt><dd>31 Dec 2026</dd></div><div><dt>Do</dt><dd>Make the two fields mandatory at creation, not optional</dd></div><div><dt>Effect</dt><dd>Stops the overrun rebuilding, and lets schedule rules run automatically</dd></div></dl></div></article></section>
+
+  <section class="panel">
+    <h2>Watch, don't act yet</h2>
+    <ul class="lines"><li class="ok"><b>Effort is running +17% against estimate.</b> 860 work items carry an estimate — a field absent from earlier exports — showing 3,620h actual against 3,101h planned, with 172 items past double. Give it another month before drawing a conclusion.</li><li class="warn"><b>DevOps completion has fallen three months running</b> — 99.0% down to 85.7% (Jun'26 cohort), while the other stream held. The newest cohort has only just passed the 60-day maturity line, so part of the drop may still close out. Re-read in four weeks.</li><li class="warn"><b>Utilisation dropped from 95.5% in Jun'26 to 63.5% in Aug'26</b> — 2,239 hours across 21 people. No leave calendar exists in the data, so this could be absence, under-logging, or genuine slack. One question to the team leads before it is read as capacity.</li><li class="ok"><b>Three owners hold 55% of open work.</b> Pradeep Singh Rawat 332, Sonu Kumar 262, Shafquat Imam 180, of 1,401 across 28 owners. Much of this is likely dormant projects inflating the count — re-measure after the reconciliation.</li><li class="warn"><b>Bug rate is not a usable signal for DevOps.</b> It swings between 0% and 83% month to month, which points to batch-logging rather than genuine quality movement.</li><li class="ok"><b>DevOps is the weakest group on schedule.</b> 24 of 30 projects past due (80%), against 44% in Power BI.</li></ul>
+  </section>
+
+  <section class="panel">
+    <h2>Confidence in this brief</h2>
+    <ul class="lines"><li class="crit"><b>Ticket integrity is the one hard blocker.</b> 2,002 tickets are analysable after excluding 136 dated in the future, 130 of which are already marked Finished. A further 453 carry a due date before their creation date. Exclusions are defensible; the export is not yet a trustworthy system of record.</li><li class="warn"><b>Projects and timesheets join on name alone, matching 40% of the time.</b> The two systems use unrelated ID schemes, so 42 of the 71 past-due projects cannot be checked against effort at all. The 21 dormant and 8 evergreen splits are solid; the rest are unverified.</li><li class="warn"><b>Only 16 project lines received logged time in 90 days</b> against 124 active projects. The naming mismatch above inflates that gap, so treat it as directional rather than exact.</li><li class="warn"><b>The two streams are Project Groups, not Scrum and Kanban.</b> No board-type field exists in the current export, so DevOps and Ticket Mgmt (M&S) are the closest real split the data supports. Read the charts as project delivery versus maintenance.</li><li class="warn"><b>No KPI targets exist anywhere in the source.</b> The thresholds colouring the tiles are proposals set in <code>config.TARGETS</code> pending sign-off, and the dashed chart lines are 12-month medians computed from the data itself — not agreed thresholds.</li><li class="ok"><b>Completion is measured on matured cohorts.</b> Items count only once their creation month is at least 60 days old, because measuring recent months directly makes them look catastrophic purely from immaturity. The chart therefore ends at Jun'26, not Aug'26.</li><li class="ok"><b>Two KPIs rest on thin samples.</b> Test pass rate covers 613 of 15,342 work items (4%), and RCA is populated on 7,164. Both are directionally useful; neither should be trended yet.</li><li class="ok"><b>Utilisation assumes 8 hours per business day with no leave calendar</b>, so it overstates any month containing holiday or absence.</li><li class="ok"><b>All three feeds are current</b> — Zoho Projects 3d · Timesheets 1d · Service Desk 0d — so cross-checks between them are sound.</li><li class="warn"><b>Zoho Print is still absent.</b> No export supplied and no definition of what it should contribute to the brief.</li></ul>
+  </section>
+
+  <footer>
+    Sources — Zoho Projects, 01 Sep 2026 (272 rows) · Timesheets, 03 Sep 2026 (51,162 rows) · Service Desk, 04 Sep 2026 (2,138 rows)<br>
+    Actions, priority order and KPI thresholds are model-generated from these exports ·
+    generated 04 Sep 2026 by digest_agent
+  </footer>
+</div>
